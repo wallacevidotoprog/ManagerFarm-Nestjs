@@ -104,14 +104,40 @@ export abstract class BaseService<
   }
 
   protected buildTypeOrmWhere<T extends Record<string, any>>(dto: T): FindOptionsWhere<TModel> {
-    const where: any = {};
+  const where: any = {};
+  const metadata = this.repo.metadata;
 
-    for (const key in dto) {
-      const value = dto[key];
-      if (value === undefined || value === null) continue;
-      where[key] = typeof value === 'string' ? ILike(`%${value}%`) : value;
+  for (const key in dto) {
+    const value = dto[key];
+    if (value === undefined || value === null) continue;
+
+    const column = metadata.findColumnWithPropertyName(key);
+
+    if (!column) {
+      continue;
     }
 
-    return where;
+    if (
+      typeof value === 'string' &&
+      ['varchar', 'text', 'character varying'].includes(String(column.type))
+    ) {
+      where[key] = ILike(`%${value}%`);
+    } else {
+      where[key] = value;
+    }
   }
+
+  return where;
+}
+  // protected buildTypeOrmWhere<T extends Record<string, any>>(dto: T): FindOptionsWhere<TModel> {
+  //   const where: any = {};
+
+  //   for (const key in dto) {
+  //     const value = dto[key];
+  //     if (value === undefined || value === null) continue;
+  //     where[key] = typeof value === 'string' ? ILike(`%${value}%`) : value;
+  //   }
+
+  //   return where;
+  // }
 }

@@ -19,8 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:dev": "npx prisma format && npx prisma generate && npx prisma db push --force-reset",
-    "seed": "ts-node prisma/seed.ts",
-    "create-db": "mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS managerfarm;\""
+    "create-db": "mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS managerfarm;\"",
+     "seed": "ts-node -r tsconfig-paths/register src/SEED/seed.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
@@ -39,6 +39,7 @@
     "class-validator-multi-lang": "^0.140.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.6.0",
+    "faker": "^6.6.6",
     "joi": "^17.13.3",
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.3",
@@ -47,7 +48,8 @@
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.25"
+    "typeorm": "^0.3.25",
+    "typeorm-extension": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

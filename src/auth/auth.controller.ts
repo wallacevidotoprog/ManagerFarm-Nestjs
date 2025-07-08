@@ -44,8 +44,8 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.GENERAL_MANAGER)
-  @HttpCode(HttpStatus.OK)
+  @Roles(Role.GENERAL_MANAGER,Role.OWNER)
+  @HttpCode(HttpStatus.ACCEPTED)
   @Post('set-property')
   async aSetProperty(@Body() dto: SetPropertytDto, @Res({ passthrough: true }) res: Response) {
     return await this.authService.aSetProperty(dto, res);

@@ -7,6 +7,6 @@ import { AuthModule } from '../auth.module';
 @Module({
   imports: [AuthModule, AppConfigModule],
   providers: [RolesGuard,AuthGuard],
-  exports: [RolesGuard,AuthGuard,AppConfigModule,AuthModule],
+  exports: [RolesGuard,AuthGuard,AuthModule,AppConfigModule],
 })
 export class GuardModule {}

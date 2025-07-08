@@ -81,6 +81,7 @@ export class AuthService {
     });
     return {
       user_name: user.name,
+      role: user.role,
     };
   }
 

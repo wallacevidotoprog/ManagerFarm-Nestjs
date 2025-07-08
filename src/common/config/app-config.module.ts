@@ -2,9 +2,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as fs from 'fs';
-import * as path from 'path';
-import { ActivityEntity } from 'src/activities/entities/activity.entity';
 import { AddressEntity } from 'src/address/entities/address.entity';
 import { DepartamentEntity } from 'src/departament/entities/department.entity';
 import { FunctionsEntity } from 'src/departament/entities/functions .entity';
@@ -14,7 +11,6 @@ import { AreaEntity } from 'src/pecuaria/bovine/entities/area.entity';
 import { BovineEntity } from 'src/pecuaria/bovine/entities/bovine.entity';
 import { BreedEntity } from 'src/pecuaria/bovine/entities/breed.entity';
 import { VaccineEntity } from 'src/pecuaria/bovine/entities/vaccine.entity';
-import { PropertyActivitiesEntity } from 'src/property/entities/property-activities.entity';
 import { PropertyEntity } from 'src/property/entities/property.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AppConfigEnv } from './app-config.env';
@@ -74,11 +70,9 @@ import { AppConfigEnv } from './app-config.env';
             UserEntity,
             AddressEntity,
             EmployeeEntity,
-            ActivityEntity,
             DepartamentEntity,
             FunctionsEntity,
             PropertyEntity,
-            PropertyActivitiesEntity,
             HistoricModificationEntity,
             BovineEntity,
             AreaEntity,
@@ -90,7 +84,7 @@ import { AppConfigEnv } from './app-config.env';
           // logging: true,
         };
 
-        if (config.DB_SSL_CHECKED==true) {
+        if (config.DB_SSL_CHECKED == true) {
           baseConfig.ssl = {
             rejectUnauthorized: true,
             ca: config.DB_SSL,
@@ -98,9 +92,8 @@ import { AppConfigEnv } from './app-config.env';
             // fs.readFileSync(path.resolve(process.cwd(), 'src/certs/ca.pem')).toString(),
           };
         }
-        
-        return baseConfig;
 
+        return baseConfig;
       },
     }),
     MailerModule.forRootAsync({

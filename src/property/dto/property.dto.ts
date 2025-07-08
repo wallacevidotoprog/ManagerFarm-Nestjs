@@ -1,12 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsJSON, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 import { CreateAddressDto } from 'src/address/dto/address.dto';
-import { AddressEntity } from 'src/address/entities/address.entity';
-import { PropertyStatus } from 'src/Domain/Models/Emun/db.enum';
+import { FarmActivityType, PropertyStatus } from 'src/Domain/Models/Emun/db.enum';
 import { MapPoint } from 'src/Domain/Models/map-points';
 import { CreateUserDto } from 'src/user/dto/user.dto';
-import { UserEntity } from 'src/user/entities/user.entity';
 
 export class CreatePropertyDto {
   @IsString()
@@ -21,6 +19,7 @@ export class CreatePropertyDto {
   @IsNotEmpty()
   name: string;
 
+  @IsOptional()
   @IsUUID()
   addressId: string;
 
@@ -28,11 +27,18 @@ export class CreatePropertyDto {
   @Type(() => CreateAddressDto)
   address: CreateAddressDto;
 
-  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsNumber()
   size: number;
 
-  @IsJSON()
+  @IsArray()
   mapPoints: MapPoint[];
+  // @IsString()
+  // mapPoints: string;
+// mapPoints: MapPoint[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => MapPoint)
+  // mapPoints: MapPoint[];
 
   @IsOptional()
   @IsUUID()
@@ -54,5 +60,10 @@ export class CreatePropertyDto {
   @IsString()
   @MaxLength(255)
   description?: string;
+
+  @IsArray()
+  @IsEnum(FarmActivityType, { each: true })
+  @IsOptional()
+  propertyActivities?: FarmActivityType[];
 }
 export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {}

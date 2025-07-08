@@ -5,7 +5,6 @@ import { MapPoint } from 'src/Domain/Models/map-points';
 import { EmployeeEntity } from 'src/employee/entities/employee.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { PropertyActivitiesEntity } from './property-activities.entity';
 import { BovineEntity } from 'src/pecuaria/bovine/entities/bovine.entity';
 
 @Entity('properties')
@@ -26,7 +25,7 @@ export class PropertyEntity extends EntityDefault {
   @JoinColumn({ name: 'addressId' })
   address: AddressEntity;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 20, scale: 5 })
   size: number;
 
   @Column({ type: 'json', nullable: true })

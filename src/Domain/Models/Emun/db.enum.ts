@@ -7,10 +7,16 @@ export enum PropertyStatus {
 
 export enum Departaments {
   NONE = 'NONE',
-  OPERATIONAL = 'OPERATIONAL',
-  ADMINISTRATIVE = 'ADMINISTRATIVE',
-  FINANCIAL = 'FINANCIAL',
-  MAINTENANCE = 'MAINTENANCE',
+  OPERATIONAL = 'OPERATIONAL',       // Operações gerais
+  AGRICULTURAL = 'AGRICULTURAL',     // Específico para agricultura
+  LIVESTOCK = 'LIVESTOCK',           // Específico para pecuária
+  ADMINISTRATIVE = 'ADMINISTRATIVE', // Administrativo
+  FINANCIAL = 'FINANCIAL',           // Financeiro
+  MAINTENANCE = 'MAINTENANCE',       // Manutenção
+  LOGISTICS = 'LOGISTICS',           // Logística
+  COMMERCIAL = 'COMMERCIAL',         // Vendas/comercial
+  TECHNICAL = 'TECHNICAL',           // Técnico/agronômico
+  SUPPORT = 'SUPPORT'                // Apoio (limpeza, cozinha, etc)
 }
 
 export enum CategoryCnh {
