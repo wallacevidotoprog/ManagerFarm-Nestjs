@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid()) @db.Char(36)
+  name       String
+  cpf        String    @unique
+  email      String    @unique
+  password   String
+  phone      String?
+  addressId  String
+  address    Address?  @relation(fields: [addressId], references: [id])
+  role       Role      @default(NONE)
+  employeeId String?   @unique
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  PropertyOwner      Property[]           @relation("owner")
+  PropertyActivities PropertyActivities[]
+
+  HistoricModification HistoricModification[]
+}
+
+model Property {
+  id          String         @id @default(uuid()) @db.Char(36)
+  cnpj        String         @unique
+  company     String
+  name        String
+  addressId   String
+  address     Address        @relation(fields: [addressId], references: [id])
+  size        Decimal        @db.Decimal(10, 2)
+  mapPoints   Json           @db.Json
+  ownerId     String?
+  owner       User?          @relation("owner", fields: [ownerId], references: [id])
+  status      PropertyStatus @default(NONE)
+  active      Boolean        @default(true)
+  description String?        @db.VarChar(255)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  PropertyActivities PropertyActivities[]
+
+  Employee Employee[]
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  cep          String?  @db.VarChar(45)
+  place        String   @db.VarChar(100)
+  number       String   @db.VarChar(45)
+  complement   String?  @db.VarChar(100)
+  neighborhood String   @db.VarChar(80)
+  city         String   @db.VarChar(50)
+  uf           String   @db.VarChar(2)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  User User[]
+
+  Property Property[]
+
+  Employee Employee[]
+}
+
+model PropertyActivities {
+  id           String     @id @default(uuid()) @db.Char(36)
+  propertyId   String
+  property     Property   @relation(fields: [propertyId], references: [id])
+  activitiesId String
+  activities   Activities @relation(fields: [activitiesId], references: [id])
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Activities {
+  id          String   @id @default(uuid()) @db.Char(36)
+  name        String
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  PropertyActivities PropertyActivities[]
+}
+
+model Department {
+  id          String       @id @default(uuid()) @db.Char(36)
+  name        String
+  functions   Departaments @default(NONE)
+  description String?      @db.VarChar(255)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  Functions Functions[]
+
+  DepartmentFunctions DepartmentFunctions[]
+}
+
+model Employee {
+  id           String       @id @default(uuid()) @db.Char(36)
+  name         String
+  cpf          String       @unique
+  rg           String?      @unique
+  cnh          String?      @db.VarChar(20)
+  category_cnh CategoryCnh? @default(NONE)
+  maturity_cnh DateTime?
+  email        String       @unique
+  phone        String?
+  birth        DateTime
+  addressId    String
+  address      Address?     @relation(fields: [addressId], references: [id])
+  admission    DateTime
+  salary       Decimal      @db.Decimal(10, 2)
+  cbo          String?      @db.VarChar(10)
+  pis          String?      @db.VarChar(15)
+  sex          Sex?         @default(NONE)
+  resignation  DateTime?
+  propertyId   String?
+  property     Property?    @relation(fields: [propertyId], references: [id])
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  DepartmentFunctions DepartmentFunctions[]
+
+  User User?
+}
+
+model Functions {
+  id           String     @id @default(uuid()) @db.Char(36)
+  name         String
+  description  String?    @db.VarChar(255)
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  DepartmentFunctions DepartmentFunctions[]
+}
+
+model DepartmentFunctions {
+  id           String     @id @default(uuid()) @db.Char(36)
+  employeeId   String
+  employee     Employee   @relation(fields: [employeeId], references: [id])
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  functionsId  String
+  functions    Functions  @relation(fields: [functionsId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model BASE {
+  id        String   @id @default(uuid()) @db.Char(36)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model HistoricModification {
+  id        String             @id @default(uuid()) @db.Char(36)
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  action    ActionModification @default(NONE)
+  tableName String
+  jsonData  Json               @db.Json
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+enum PropertyStatus {
+  NONE
+  ACTIVE
+  INACTIVE
+  LEASED
+}
+
+enum Departaments {
+  NONE
+  OPERATIONAL
+  ADMINISTRATIVE
+  FINANCIAL
+  MAINTENANCE
+}
+
+enum CategoryCnh {
+  NONE
+  A
+  B
+  C
+  D
+  E
+}
+
+enum Sex {
+  NONE
+  MASCULINO
+  FEMININO
+  OUTROS
+}
+
+enum Role {
+  NONE
+  DEV
+  ADMIN
+  MANEGER
+  EMPLOYEE
+  OWNER
+}
+
+enum ActionModification {
+  NONE
+  CREATE
+  UPDATE
+  DELETE
+}
