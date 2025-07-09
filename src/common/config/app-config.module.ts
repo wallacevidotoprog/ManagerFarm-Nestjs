@@ -84,7 +84,8 @@ import { AppConfigEnv } from './app-config.env';
           // logging: true,
         };
 
-        if (config.DB_SSL_CHECKED == true) {
+        
+        if (config.DB_SSL_CHECKED) {
           baseConfig.ssl = {
             rejectUnauthorized: true,
             ca: config.DB_SSL,

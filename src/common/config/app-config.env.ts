@@ -23,7 +23,10 @@ export class AppConfigEnv {
     return this.requireEnv(this.config.get<string>('DB_DATABASE'), 'DB_DATABASE');
   }
    get DB_SSL_CHECKED(): boolean {
-    return this.requireEnv(this.config.get<boolean>('DB_SSL_CHECKED'), 'DB_SSL_CHECKED');
+
+    const ttx =  this.requireEnv(this.config.get<string>('DB_SSL_CHECKED'), 'DB_SSL_CHECKED');
+
+    return ttx === 'true'? true : false
   }
 
    get DB_SSL(): string {
