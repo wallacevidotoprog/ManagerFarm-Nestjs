@@ -1,4 +1,4 @@
-import { Body, Controller, NotFoundException, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { RolesGuard } from 'src/auth/Guards/roles.guard';
@@ -20,7 +20,6 @@ export class EmployeeController extends BaseController<CreateEmployeeDto, Update
   @Post()
   override create(@Body() dto: CreateEmployeeDto, @Req() req: Request) {
     const user = req?.user as UserRequest;
-    console.log('user:', user);
 
     if (!user || !user.propertyId) {
       throw new NotFoundException('Propriedade não encontrada para o seu usuário.');
@@ -28,5 +27,23 @@ export class EmployeeController extends BaseController<CreateEmployeeDto, Update
     dto.propertyId = user.propertyId;
 
     return super.create(dto, req);
+  }
+
+  @Get()
+  override async findAll(
+    page: string | undefined,
+    limit: string | undefined,
+    query: Record<string, any>,
+    req: Request,
+  ): Promise<{ result:{ data: any[]; total: number} }> {
+
+    const user = req?.user as UserRequest;
+    if (!user || !user.propertyId) {
+      throw new NotFoundException('Propriedade não encontrada para o seu usuário.');
+    }
+
+    query.propertyId = user.propertyId;
+
+    return await super.findAll(page, limit, query, req);
   }
 }

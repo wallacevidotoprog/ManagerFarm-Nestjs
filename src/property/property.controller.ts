@@ -29,12 +29,8 @@ export class PropertyController extends BaseController<CreatePropertyDto, Update
     @Query('limit') limit = '10',
     @Query() query: Record<string, any>,
     @Req() req: Request,
-  ): Promise<{ data: any[]; total: number }> {
+  ): Promise<{ result:{data: any[]; total: number} }> {
     query.ownerId = req.user?.sub;
-
-    // console.log(req.user);
-
-    // console.log(query);
 
     return await super.findAll(page, limit, query, req);
   }

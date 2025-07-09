@@ -2,7 +2,7 @@ import { BadRequestException, Inject, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Request } from 'express';
 import { CrudEvent } from 'src/event/historic/event-crud.event';
-import { DeepPartial, FindOptionsOrder, FindOptionsWhere, ILike, ObjectLiteral, Repository } from 'typeorm';
+import { DeepPartial, FindOptionsWhere, ILike, ObjectLiteral, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { ActionModification } from '../Models/Emun/db.enum';
 export abstract class BaseService<
@@ -54,12 +54,17 @@ export abstract class BaseService<
     }
   }
 
-  async findAll(req: Request, pagination: { page: number; limit: number }, where: Record<string, any> = {}): Promise<{ data: TModel[]; total: number }> {
+  async findAll(
+    req: Request,
+    pagination: { page: number; limit: number },
+    where: Record<string, any> = {},
+  ): Promise<{ result: { data: TModel[]; total: number } }> {
     try {
       const { page, limit } = pagination;
       const skip = (page - 1) * limit;
 
       const typeOrmWhere = this.buildTypeOrmWhere(where);
+      // console.log('typeOrmWhere', typeOrmWhere);
 
       const [data, total] = await this.repo.findAndCount({
         where: typeOrmWhere,
@@ -68,7 +73,12 @@ export abstract class BaseService<
         // order: { [key as keyof TModel]: 'DESC' } as FindOptionsOrder<TModel>
       });
 
-      return { data, total };
+      return {
+        result: {
+          data,
+          total,
+        },
+      };
     } catch (error) {
       console.error('Erro ao buscar registros:', error);
       throw new BadRequestException(error?.message || 'Erro ao buscar registros');
@@ -104,31 +114,33 @@ export abstract class BaseService<
   }
 
   protected buildTypeOrmWhere<T extends Record<string, any>>(dto: T): FindOptionsWhere<TModel> {
-  const where: any = {};
-  const metadata = this.repo.metadata;
+    const where: any = {};
+    const metadata = this.repo.metadata;
 
-  for (const key in dto) {
-    const value = dto[key];
-    if (value === undefined || value === null) continue;
+    for (const key in dto) {
+      const value = dto[key];
+      if (value === undefined || value === null) continue;
 
-    const column = metadata.findColumnWithPropertyName(key);
+      const column = metadata.findColumnWithPropertyName(key);
 
-    if (!column) {
-      continue;
+      if (!column) {
+        continue;
+      }
+      // console.log('-------------------------');
+      // console.log('value', value);
+      // console.log('typeof', typeof value);
+      // console.log('String(column.type)', String(column.type));
+      // console.log('-------------------------');
+      // if (typeof value === 'string' && ['varchar', 'text', 'character varying'].includes(String(column.type))) {
+      if (typeof value === 'string' && column.type != 'uuid') {
+        where[key] = ILike(`%${value}%`);
+      } else {
+        where[key] = value;
+      }
     }
 
-    if (
-      typeof value === 'string' &&
-      ['varchar', 'text', 'character varying'].includes(String(column.type))
-    ) {
-      where[key] = ILike(`%${value}%`);
-    } else {
-      where[key] = value;
-    }
+    return where;
   }
-
-  return where;
-}
   // protected buildTypeOrmWhere<T extends Record<string, any>>(dto: T): FindOptionsWhere<TModel> {
   //   const where: any = {};
 
