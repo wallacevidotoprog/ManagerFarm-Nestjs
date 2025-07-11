@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: ['http://localhost:4200', 'https://manager-farm-angular.vercel.app'],
+    origin: ['http://localhost:4200', 'https://manager-farm-angular.vercel.app','http://localhost:55927'],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Origin'],
     credentials: true,

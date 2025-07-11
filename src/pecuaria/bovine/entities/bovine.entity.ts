@@ -11,6 +11,9 @@ export class BovineEntity extends EntityDefault {
   @Column()
   name: string;
 
+  @Column()
+  tagNumber: string;
+
   @Column({ type: 'date' })
   birthDate: Date;
 
